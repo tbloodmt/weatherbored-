@@ -3,6 +3,7 @@ const apiKey = 'df3fb9934a7d8ebae97c6749b588071a'
 const searchInput = document.querySelector("#searchinput")
 const searchButton = document.querySelector("#searchbtn")
 const mainWeathercontainer = document.querySelector(".mainweather")
+const fiveDayContainer = document.querySelector(".fivedaycontainer")
 async function search(city){
 try {
     const response=await fetch(`
@@ -15,7 +16,7 @@ try {
     const weatherURL=`https://openweathermap.org/img/wn/${weatherIcon}.png`
 
     const mainCard=`
-    <div>
+    <div class="main-weather">
     <img src="${weatherURL}"/>
     <h2>${data.name}</h2> 
     <span>${currentDate}</span>
@@ -34,7 +35,27 @@ fiveDayForcast(lat,lon)
 }
 async function fiveDayForcast(lat,lon){
 try {
+  const weeklyresponse=await fetch(`
+  https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&units=imperial&appid=${apiKey}
+  `)
+  const weekdata=await weeklyresponse.json()
   
+  const weekArray=weekdata.list.filter(hour=>hour.dt_txt.includes("12:00:00"))
+  console.log(weekArray)
+  let weekCard=""
+  weekArray.forEach(day=>{
+    const weekDate=new Date(day.dt_txt).toLocaleDateString().split(",")[0]
+    console.log(weekDate)
+    weekCard+=`
+    <div class="card">
+    <p>${weekDate}</p>
+    <P>temp: ${day.main.temp}</P>
+    <p>humidity: ${day.main.humidity}</p>
+    <p>windspeed: ${day.wind.speed}</p>
+    </div>
+    `
+    fiveDayContainer.innerHTML=weekCard
+  })
 } catch (error) {
   console.error(error)
 }
