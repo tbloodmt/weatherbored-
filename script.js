@@ -59,11 +59,21 @@ try {
 } catch (error) {
   console.error(error)
 }
+
+
 }
 
+const saveSearches=()=>{
+const history = JSON.parse(localStorage.getItem("history")) || []
+let previousCity = searchInput.value
+history.push(previousCity)
+localStorage.setItem("history",JSON.stringify(history))
+
+}
 
 searchButton.addEventListener("click",function(event){
 event.preventDefault()
 const city=searchInput.value
+saveSearches()
 search(city)
 })
